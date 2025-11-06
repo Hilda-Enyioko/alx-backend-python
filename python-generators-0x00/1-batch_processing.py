@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 """
-1-batch_processing.py - a generator to fetch and process data in batches from the users database
+1-batch_processing.py - a generator to fetch and process data in batches from
+the users database
 """
 
 import mysql.connector
@@ -10,17 +11,19 @@ from mysql.connector import Error
 """
 stream_users_in_batches(batch_size) - fetches rows in table in batches
 """
+
+
 def stream_users_in_batches(batch_size):
     connection = None
     cursor = None
 
     try:
-        connector = mysql.connector.connect(
-                host='localhost',
-                user='root',
-                password='my_password',
-                database='ALX_prodev'
-                )
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='my_password',
+            database='ALX_prodev'
+        )
 
         cursor = connection.cursor(dictionary=True)
 
@@ -45,8 +48,11 @@ def stream_users_in_batches(batch_size):
 
 
 """
- batch_processing(batch_size) - processes each batch to filter users over the age of 25
+ batch_processing(batch_size) -
+ processes each batch to filter users over the age of 25
 """
+
+
 def batch_processing(batch_size):
     for batch in stream_users_in_batches(batch_size):
         filtered_batch = []
@@ -56,4 +62,3 @@ def batch_processing(batch_size):
                 filtered_batch.append(row)
 
         return filtered_batch
-
