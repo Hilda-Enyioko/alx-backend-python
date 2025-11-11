@@ -25,3 +25,7 @@ class ExecuteQuery:
             self.cursor.close()
         if self.conn:
             self.conn.close()
+
+#### Using the ExecuteQuery context manager to fetch users older than 25
+with ExecuteQuery('users.db', "SELECT * FROM users WHERE age > ?", (25,)) as results:
+    print(results)
