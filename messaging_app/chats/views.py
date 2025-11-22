@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
@@ -40,6 +39,10 @@ class MessageViewset(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
+    
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['message_body']
+
     
     def get_queryset(self):
         conversation_id = self.request.query_params.get("conversation")
