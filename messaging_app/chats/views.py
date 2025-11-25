@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, MessageSerializer, UserSerializer
 from .permissions import IsParticipantOfConversation
+from rest_framework.status import HTTP_403_FORBIDDEN
 
 # Create your views here.
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -35,6 +36,15 @@ class ConversationViewSet(viewsets.ModelViewSet):
         
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
+    def retrieve(self, request, *args, **kwargs):
+        conversation = self.get_object()
+        if request.user not in conversation.participants.all():
+            return Response(
+                {"detail": "Forbidden"},
+                status=HTTP_403_FORBIDDEN
+            )
+        return super().retrieve(request, *args, **kwargs)
+    
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
@@ -55,7 +65,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         return qs.order_by("sent_at")
         
-    def  create(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         conversation_id = self.request.query_params.get("conversation")
         message_body = request.data.get("message_body")
         
@@ -69,8 +79,11 @@ class MessageViewSet(viewsets.ModelViewSet):
             raise ValidationError("Conversation not found.")
 
         # Ensure the user is part of the conversation
-        if request.user not in conversation.participants.all():
-            raise ValidationError("You cannot send messages to a conversation you are not part of.")
+        if self.request.user not in conversation.participants.all():
+            return Response(
+                {"detail": "Forbidden"},
+                status=HTTP_403_FORBIDDEN
+            )
 
         # Create and save the message
         message = Message.objects.create(
