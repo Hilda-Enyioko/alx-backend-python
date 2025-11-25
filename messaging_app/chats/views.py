@@ -4,13 +4,13 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, MessageSerializer, UserSerializer
-from messaging_app.chats.permissions import IsConversationParticipant, IsMessageOwner
+from .permissions import IsParticipantOfConversation
 
 # Create your views here.
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    permission_classes = [IsAuthenticated, IsConversationParticipant]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     
     def get_queryset(self):
         return Conversation.objects.filter(participants=self.request.user)
@@ -39,7 +39,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated, IsMessageOwner]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     
     filter_backends = [filters.SearchFilter]
     search_fields = ['message_body']
