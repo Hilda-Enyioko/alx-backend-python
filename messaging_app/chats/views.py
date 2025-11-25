@@ -2,10 +2,15 @@ from rest_framework import viewsets, status, filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.status import HTTP_403_FORBIDDEN
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, MessageSerializer, UserSerializer
 from .permissions import IsParticipantOfConversation
-from rest_framework.status import HTTP_403_FORBIDDEN
+from .filters import MessageFilter
+from .pagination import MessagePagination
 
 # Create your views here.
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -50,8 +55,11 @@ class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
+    pagination_class = MessagePagination
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend, OrderingFilter]
+    filterset_class = MessageFilter
     
-    filter_backends = [filters.SearchFilter]
+    ordering_fields = ["created_at"]
     search_fields = ['message_body']
 
     
