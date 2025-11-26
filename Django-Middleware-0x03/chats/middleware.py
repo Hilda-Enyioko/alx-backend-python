@@ -94,3 +94,27 @@ class OffensiveLanguageMiddleware:
                 return x_forwarded_for.split(",")[0].strip()
             
             return request.META.get("REMOTE_ADDR")
+        
+        
+# A middleware that restricts users' access to certain features based on their role.
+class RolePermissionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+
+        user = request.user
+
+        # Only check role if user is authenticated
+        if user.is_authenticated:
+
+            # Get user's role
+            role = getattr(user, "role", None)
+
+            # Deny access if role is not admin or host
+            if role not in ["admin", "host"]:
+                return HttpResponseForbidden(
+                    "You do not have permission to perform this action."
+                )
+
+        return self.get_response(request)
