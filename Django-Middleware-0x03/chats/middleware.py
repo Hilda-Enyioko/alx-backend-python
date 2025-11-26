@@ -97,7 +97,7 @@ class OffensiveLanguageMiddleware:
         
         
 # A middleware that restricts users' access to certain features based on their role.
-class RolePermissionMiddleware:
+class RolepermissionMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
