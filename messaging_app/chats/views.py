@@ -18,24 +18,27 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['participants_id__user_id']
+    
     def get_queryset(self):
-        return Conversation.objects.filter(participants=self.request.user)
+        return Conversation.objects.filter(participants_id=self.request.user)
 
     def create(self, request, *args, **kwargs):
         
-        participant_ids = request.data.get("participants", [])
+        participant_ids = request.data.get("participants_id", [])
 
         if len(participant_ids) < 2:
             raise ValidationError("A conversation must have at least two participants.")
 
         # Ensure all participants exist
-        participants = User.objects.filter(user_id__in=participant_ids)
+        participants_id = User.objects.filter(user_id__in=participant_ids)
 
-        if len(participants) != len(participant_ids):
+        if len(participants_id) != len(participant_ids):
             raise ValidationError("One or more participants do not exist.")
         
         conversation = Conversation.objects.create()
-        conversation.participants.set(participants)
+        conversation.participants_id.set(participants_id)
         serializer = ConversationSerializer(conversation)
         conversation.save()
         
@@ -43,13 +46,12 @@ class ConversationViewSet(viewsets.ModelViewSet):
     
     def retrieve(self, request, *args, **kwargs):
         conversation = self.get_object()
-        if request.user not in conversation.participants.all():
+        if request.user not in conversation.participants_id.all():
             return Response(
                 {"detail": "Forbidden"},
                 status=HTTP_403_FORBIDDEN
             )
         return super().retrieve(request, *args, **kwargs)
-    
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
@@ -62,11 +64,10 @@ class MessageViewSet(viewsets.ModelViewSet):
     ordering_fields = ["created_at"]
     search_fields = ['message_body']
 
-    
     def get_queryset(self):
-        conversation_id = self.request.query_params.get("conversation")
+        conversation_id = self.kwargs.get("conversation_pk")
         
-        qs = Message.objects.filter(conversation__participants=self.request.user)
+        qs = Message.objects.filter(conversation__participants_id=self.request.user)
 
         if conversation_id:
             qs = qs.filter(conversation__conversation_id=conversation_id)
@@ -74,29 +75,26 @@ class MessageViewSet(viewsets.ModelViewSet):
         return qs.order_by("sent_at")
         
     def create(self, request, *args, **kwargs):
-        conversation_id = self.request.query_params.get("conversation")
+        conversation_id = kwargs.get("conversation_pk")
         message_body = request.data.get("message_body")
         
         if not conversation_id:
             raise ValidationError("conversation field is required.")
 
-        # Ensure conversation exists
         try:
             conversation = Conversation.objects.get(conversation_id=conversation_id)
         except Conversation.DoesNotExist:
             raise ValidationError("Conversation not found.")
 
-        # Ensure the user is part of the conversation
-        if self.request.user not in conversation.participants.all():
+        if self.request.user not in conversation.participants_id.all():
             return Response(
                 {"detail": "Forbidden"},
                 status=HTTP_403_FORBIDDEN
             )
 
-        # Create and save the message
         message = Message.objects.create(
             conversation=conversation,
-            sender=request.user,
+            sender_id=request.user,  # match your model field
             message_body=message_body
         )
 
