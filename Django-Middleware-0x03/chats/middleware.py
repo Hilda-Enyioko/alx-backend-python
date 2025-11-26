@@ -50,3 +50,47 @@ class RestrictAccessByTimeMiddleware:
             return HttpResponseForbidden("Chat access is restricted during this time.")
         
         return self.get_response(request)
+    
+
+# A middleware that blocks spam messages
+# By limiting users to 5 messages sent per minute
+
+from django.utils.timezone import now
+from datetime import timedelta
+
+class  OffensiveLanguageMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.message_records = {}
+        self.message_limit = 5
+        self.time_window = timedelta(minutes=1)
+        
+    def __call__(self, request):
+        if request.method == "POST":
+            sender_ip = self.get_client_ip(request)
+            current_time = now()
+            
+            if sender_ip not in self.message_records:
+                self.message_records[sender_ip] = []
+                
+            # clean old timestamps outside the time_window
+            self.message_records[sender_ip] = [timestamp for timestamp in self.message_records[sender_ip] if current_time - timestamp < self.time_window]
+            
+            # check if message limit has been reached
+            if len(self.message_records[sender_ip]) >= self.message_limit:
+                return HttpResponseForbidden(
+                    "Message limit exceeded. You can only send 5 messages per minute."
+                )
+            
+            # Add current timestamp
+            self.message_records[sender_ip].append(current_time)
+            
+            return self.get_response(request)
+        
+        def get_client_ip(self, request):
+            x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+            
+            if x_forwarded_for:
+                return x_forwarded_for.split(",")[0].strip()
+            
+            return request.META.get("REMOTE_ADDR")
