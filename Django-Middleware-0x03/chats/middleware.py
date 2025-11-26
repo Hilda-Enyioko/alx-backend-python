@@ -58,7 +58,7 @@ class RestrictAccessByTimeMiddleware:
 from django.utils.timezone import now
 from datetime import timedelta
 
-class  OffensiveLanguageMiddleware:
+class OffensiveLanguageMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.message_records = {}
