@@ -15,6 +15,19 @@ class User(models.Model):
 
 
 """
+MessageQuerySet: A custom queryset to handle threaded messages.
+This utilizes select_related and prefetch_related to optimize database queries
+by reducing the number of queries needed to fetch related objects.
+"""
+class MessageQuerySet(models.QuerySet):
+    def threaded_for_user(self, user):
+        return (
+            self.filter(receiver=user, parent_message__isnull=True)
+            .select_related('sender', 'receiver')
+            .prefetch_related('replies__sender', 'replies__receiver', 'replies__replies')
+        )
+
+"""
 Message model: A simple model to represent messages in the messaging app.
 """
 class Message(models.Model):
@@ -24,9 +37,23 @@ class Message(models.Model):
     content = models.TextField()
     edited = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    # Parent message for threading
+    parent_message = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Message from {self.sender} to {self.receiver} at {self.timestamp}"
+    
+    
+    # Recursive method to fetch all replies for this message
+    def get_thread(self):
+        thread = []
+        def _get_replies(message):
+            for reply in message.replies.all():
+                thread.append(reply)
+                _get_replies(reply)
+        _get_replies(self)
+        return thread
 
 
 """
