@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from .models import Message
+from .managers import UnreadMessagesManager
 # Create your views here.
 
 """
@@ -44,6 +45,6 @@ def inbox(request):
 @login_required
 def unread_inbox(request):
     user = request.user
-    messages = Message.unread.for_user(user)
+    messages = Message.unread.unread_for_user(user).only('id', 'sender', 'content', 'timestamp', 'read', 'parent_message')
 
     return render(request, 'messaging/unread_inbox.html', {'messages': messages})
