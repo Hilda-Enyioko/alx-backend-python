@@ -22,7 +22,20 @@ Inbox view: A view to display threaded messages for the logged-in user.
 """
 @login_required
 def inbox(request):
-    # Fetch threaded messages for the logged-in user
-    messages = Message.objects.threaded_for_user(request.user)
+    user = request.user
     
-    return render(request, 'messaging/inbox.html', {'messages': messages})
+    # Fetch messages where user is either sender or receiver
+    messages = (
+        Message.objects.filter(sender=user) | Message.objects.filter(receiver=user)
+    ).filter(parent_message__isnull=True)  # Only top-level messages
+    messages = messages.select_related('sender', 'receiver').prefetch_related(
+        'replies__sender', 'replies__receiver', 'replies__replies'
+    ).distinct()  # distinct to avoid duplicates
+
+    # Build threaded structure for template
+    threaded_messages = []
+    for msg in messages:
+        thread = [msg] + msg.get_thread()
+        threaded_messages.append(thread)
+
+    return render(request, 'messaging/inbox.html', {'threaded_messages': threaded_messages})

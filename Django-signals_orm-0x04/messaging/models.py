@@ -13,20 +13,6 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
-
-"""
-MessageQuerySet: A custom queryset to handle threaded messages.
-This utilizes select_related and prefetch_related to optimize database queries
-by reducing the number of queries needed to fetch related objects.
-"""
-class MessageQuerySet(models.QuerySet):
-    def threaded_for_user(self, user):
-        return (
-            self.filter(receiver=user, parent_message__isnull=True)
-            .select_related('sender', 'receiver')
-            .prefetch_related('replies__sender', 'replies__receiver', 'replies__replies')
-        )
-
 """
 Message model: A simple model to represent messages in the messaging app.
 """
