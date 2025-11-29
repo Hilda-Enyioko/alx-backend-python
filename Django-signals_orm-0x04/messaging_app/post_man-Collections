@@ -1,0 +1,224 @@
+{
+	"info": {
+		"_postman_id": "ad603230-954a-4743-a775-6f394913a43f",
+		"name": "Messaging API",
+		"description": "This is a Messaging API\n\nFor: Chats App\n\nIn: ALX Pro Backend Dev Program",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48857677",
+		"_collection_link": "https://enyiokohilda-9324065.postman.co/workspace/Hilda-Enyioko's-Workspace~6ecd8943-4f53-4955-81b6-f3be98c1d7fd/collection/48857677-ad603230-954a-4743-a775-6f394913a43f?action=share&source=collection_link&creator=48857677"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY0MTYxMDc2LCJpYXQiOjE3NjQxNTc0NzYsImp0aSI6IjIzMTY5YzllZDk5NTQ1Y2M4OTMzNDk1ZDU3ODEwNWVjIiwidXNlcl9pZCI6IjQ5NzBhNGIyLTY1ZDAtNDEzMy1hNjY0LTg1OWQxNTFiZTAwMSIsInVzZXJuYW1lIjoiaGlsZGFhbWFyYWNoaSIsImVtYWlsIjoiZW55aW9rb2hpbGRhQGdtYWlsLmNvbSJ9.j8VOvAPInj84VDnTU1CjBg7WNjV9_ZnLpH61b3FYejI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"enyiokohilda@gmail.com\",\r\n  \"password\": \"hildaamarachi\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Message",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY0MTYxMDc2LCJpYXQiOjE3NjQxNTc0NzYsImp0aSI6IjIzMTY5YzllZDk5NTQ1Y2M4OTMzNDk1ZDU3ODEwNWVjIiwidXNlcl9pZCI6IjQ5NzBhNGIyLTY1ZDAtNDEzMy1hNjY0LTg1OWQxNTFiZTAwMSIsInVzZXJuYW1lIjoiaGlsZGFhbWFyYWNoaSIsImVtYWlsIjoiZW55aW9rb2hpbGRhQGdtYWlsLmNvbSJ9.j8VOvAPInj84VDnTU1CjBg7WNjV9_ZnLpH61b3FYejI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"message_body\": \"Hello, how are you?\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/conversations/7fcf6461-68ac-4bfb-b487-744ab6bb3d1e/messages/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"conversations",
+						"7fcf6461-68ac-4bfb-b487-744ab6bb3d1e",
+						"messages",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Conversation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY0MTYxMDc2LCJpYXQiOjE3NjQxNTc0NzYsImp0aSI6IjIzMTY5YzllZDk5NTQ1Y2M4OTMzNDk1ZDU3ODEwNWVjIiwidXNlcl9pZCI6IjQ5NzBhNGIyLTY1ZDAtNDEzMy1hNjY0LTg1OWQxNTFiZTAwMSIsInVzZXJuYW1lIjoiaGlsZGFhbWFyYWNoaSIsImVtYWlsIjoiZW55aW9rb2hpbGRhQGdtYWlsLmNvbSJ9.j8VOvAPInj84VDnTU1CjBg7WNjV9_ZnLpH61b3FYejI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"participants_id\": [\r\n        \"4970a4b2-65d0-4133-a664-859d151be001\",\r\n        \"b59bc1b2-4d6d-45f4-99a1-3327297fb54f\"\r\n    ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/conversations/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"conversations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Conversation",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY0MTYxMDc2LCJpYXQiOjE3NjQxNTc0NzYsImp0aSI6IjIzMTY5YzllZDk5NTQ1Y2M4OTMzNDk1ZDU3ODEwNWVjIiwidXNlcl9pZCI6IjQ5NzBhNGIyLTY1ZDAtNDEzMy1hNjY0LTg1OWQxNTFiZTAwMSIsInVzZXJuYW1lIjoiaGlsZGFhbWFyYWNoaSIsImVtYWlsIjoiZW55aW9rb2hpbGRhQGdtYWlsLmNvbSJ9.j8VOvAPInj84VDnTU1CjBg7WNjV9_ZnLpH61b3FYejI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"participants_id\": [\r\n        \"4970a4b2-65d0-4133-a664-859d151be001\",\r\n        \"b59bc1b2-4d6d-45f4-99a1-3327297fb54f\"\r\n    ]\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{base_url}}/conversations/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"conversations",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "jwt",
+		"jwt": [
+			{
+				"key": "algorithm",
+				"value": "HS256",
+				"type": "string"
+			},
+			{
+				"key": "isSecretBase64Encoded",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "payload",
+				"value": "{}",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "headerPrefix",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "queryParamKey",
+				"value": "token",
+				"type": "string"
+			},
+			{
+				"key": "header",
+				"value": "{}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
