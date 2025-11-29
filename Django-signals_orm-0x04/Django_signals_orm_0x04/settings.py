@@ -40,8 +40,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'messaging',
-    # Include the MessagingConfig to ensure signals are loaded
-    'messaging.apps.MessagingConfig',
 ]
 
 MIDDLEWARE = [
