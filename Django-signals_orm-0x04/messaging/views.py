@@ -40,3 +40,10 @@ def inbox(request):
         threaded_messages.append(thread)
 
     return render(request, 'messaging/inbox.html', {'threaded_messages': threaded_messages})
+
+@login_required
+def unread_inbox(request):
+    user = request.user
+    messages = Message.unread.for_user(user)
+
+    return render(request, 'messaging/unread_inbox.html', {'messages': messages})
