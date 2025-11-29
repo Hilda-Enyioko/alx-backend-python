@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .models import Message, Notification
+from .models import User, Message, MessageHistory, Notification
 
 class SignalTestCase(TestCase):
 
@@ -20,3 +20,8 @@ class SignalTestCase(TestCase):
         self.assertTrue(notification.exists())
         self.assertEqual(notification.count(), 1)
         self.assertFalse(notification.first().is_read)
+        
+    def test_user_deletion_cleans_up_related_data(self):
+        self.user.delete()
+        self.assertFalse(Message.objects.filter(sender=self.user).exists())
+        self.assertFalse(MessageHistory.objects.filter(edited_by=self.user).exists())

@@ -1,6 +1,6 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
-from .models import Message, MessageHistory, Notification
+from .models import User, Message, MessageHistory, Notification
 
 """
 A signal receiver that creates a Notification instance 
@@ -37,3 +37,20 @@ def log_message_edit(sender, instance, **kwargs):
                 instance.edited = True
         except Message.DoesNotExist:
             pass
+        
+"""
+A signal receiver that deletes all related messages, notifications,
+and message histories when a User instance is deleted.
+"""
+@receiver(post_delete, sender=User)
+def delete_user_related_data(sender, instance, **kwargs):
+
+    # Messages where user is sender or receiver
+    Message.objects.filter(sender=instance).delete()
+    Message.objects.filter(receiver=instance).delete()
+    
+    # Notifications for this user
+    Notification.objects.filter(user=instance).delete()
+    
+    # Message histories where user edited the message
+    MessageHistory.objects.filter(edited_by=instance).delete()
