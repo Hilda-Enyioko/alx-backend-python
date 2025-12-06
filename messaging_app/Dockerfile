@@ -21,5 +21,7 @@ COPY . .
 # Expose Django a default port
 EXPOSE 8000
 
+# Run with: docker run -p 8000:8000 <image_name>
+
 #Run server
 CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
