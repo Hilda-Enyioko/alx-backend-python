@@ -1,0 +1,36 @@
+#!usr/bin/env bash
+
+# This is as custom bash script design to automate Kubernetes setup or tasks
+# This script starts: 
+# - Starts a Kubernetes cluster on your machine
+# - Verifies that the cluster is running using ```kubectl cluster info```.
+# - Retrieves the available pods
+
+set -e      # if any command fails, stop the script immediately
+
+echo "Checking if minikube is installed..."
+if ! command -v minikube &> /dev/null
+then
+    echo "Minikube is not installed. Please install Minikube first."
+    exit 1
+
+fi
+
+echo "Checking if kubectl is intalled..."
+if ! command -v kubectl &> /dev/null
+then
+    echo "kubectl is not installed. Please install kubectl first."
+    exit 1
+
+fi
+
+echo "Starting local kubernetes cluster using minikube..."
+minikube start
+
+echo "Checking in cluster is running..."
+kubernetes cluster-info 
+
+echo "Retrieving all available pods running in the cluster..."
+kubectl get pods -all--namespaces
+
+echo "Kubernetes local cluster is up and running!"
