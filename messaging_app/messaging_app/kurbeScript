@@ -28,7 +28,7 @@ echo "Starting local kubernetes cluster using minikube..."
 minikube start
 
 echo "Checking in cluster is running..."
-kubernetes cluster-info 
+kubectl cluster-info 
 
 echo "Retrieving all available pods running in the cluster..."
 kubectl get pods -all--namespaces
