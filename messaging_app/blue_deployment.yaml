@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: messaging-app
-          image: hildaenyoko/messaging-app:blue
+          image: hildaenyoko/messaging-app:2.0
           ports:
             - containerPort: 8000
           env:
