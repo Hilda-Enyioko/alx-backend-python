@@ -9,7 +9,9 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                sh 'git clone -b main https://github.com/Hilda-Enyioko/alx-backend-python.git'
+                git branch: 'main',
+                    url: 'https://github.com/Hilda-Enyioko/alx-backend-python.git',
+                    credentialsId: 'github-creds'
             }
         }
 
