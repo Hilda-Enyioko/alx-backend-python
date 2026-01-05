@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.10'
+        }
+    }
 
     environment {
         VENV = 'myenv'
@@ -16,19 +20,10 @@ pipeline {
             }
         }
 
-        stage('Install Python') {
-            steps {
-                sh '''
-                apt-get update
-                apt-get install -y python3 python3-venv python3-pip
-                '''
-            }
-        }
-
         stage('Set Up Python Environment') {
             steps {
                 sh '''
-                python3 -m venv $VENV
+                python -m venv $VENV
                 . $VENV/bin/activate
                 pip3 install --upgrade pip
                 pip3 install -r messaging_app/requirements.txt
@@ -46,7 +41,6 @@ pipeline {
             }
         }
 
-        // New stages for Docker build and push
         stage('Build Docker Image') {
             steps {
                 sh '''
@@ -57,7 +51,13 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
                     sh '''
                     echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
                     docker push $DOCKER_IMAGE
