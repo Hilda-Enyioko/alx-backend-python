@@ -1,0 +1,39 @@
+#!usr/bin/env bash
+set -e    #if any command fails, stop the script
+
+DEPLOYMENT_NAME="messaging-app"
+SERVICE_NAME="messaging-app-service"
+PORT=8000
+
+echo "Scaling Django app deployment to 3 replicas..."
+kubectl scale deployment $DEPLOYMENT_NAME --replicas=3
+
+echo "Waiting for pods to be ready..."
+kubectl rollout status deployment $DEPLOYMENT_NAME
+
+echo "Verifying running pods..."
+kubectl get pods
+
+echo "Checking if wrk is installed..."
+if ! command -v wrk &> /dev/null
+then
+    echo "wrk is not installed. Please install wrk to perform load testing."
+    exit 1
+fi
+
+echo "Port-forwarding service for load testing..."
+kubectl port-forward service/$SERVICE_NAME $PORT:$PORT &
+PORT_FORWARD_PID=$!
+
+sleep 5
+
+echo "Running load test with wrk..."
+wrk -t2 -c50 -d30s http://127.0.0.1:$PORT
+
+echo "Stopping port-forward..."
+kill $PORT_FORWARD_PID
+
+echo "Monitoring resource usage..."
+kubectl top pods
+
+echo "Scaling and load testing completed successfully"
