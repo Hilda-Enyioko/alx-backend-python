@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         VENV = 'myenv'
+        DOCKER_IMAGE = 'hildaenyioko/messaging_app:latest'
     }
 
     stages {
@@ -42,6 +43,26 @@ pipeline {
                 pytest messaging_app/tests \
                   --junitxml=messaging_app/test-report.xml
                 '''
+            }
+        }
+
+        // New stages for Docker build and push
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                docker build -t $DOCKER_IMAGE messaging_app/
+                '''
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker push $DOCKER_IMAGE
+                    '''
+                }
             }
         }
     }
