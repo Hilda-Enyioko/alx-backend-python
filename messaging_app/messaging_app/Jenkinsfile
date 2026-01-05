@@ -9,9 +9,7 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                git credentialsId: 'github-creds',
-                    url: 'https://github.com/Hilda-Enyioko/alx-backend-python.git',
-                    branch: 'main'
+                sh 'git clone -b main https://github.com/Hilda-Enyioko/alx-backend-python.git'
             }
         }
 
@@ -29,8 +27,8 @@ pipeline {
                 sh '''
                 python3 -m venv $VENV
                 . $VENV/bin/activate
-                pip install --upgrade pip
-                pip install -r messaging_app/requirements.txt
+                pip3 install --upgrade pip
+                pip3 install -r messaging_app/requirements.txt
                 '''
             }
         }
